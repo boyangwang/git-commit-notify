@@ -27,10 +27,9 @@ const pushToHook = (payload) => {
     text: `**${payload.author}** pushed commit with notification on **${payload.date}**\n${config.repo}/commit/${payload.hash}`,
     attachments: [{
       title: payload.subject,
-      text: `\`\`\`\n${payload.body}\n\`\`\``,
+      text: `\n${payload.body}`,
       color: '#409eff',
-    },
-    ],
+    }],
   };
 
   Axios.post(config.hook, {
@@ -48,8 +47,7 @@ commits.forEach((commit) => {
     .toString().split('@@@');
 
   if ([subject, body].some((message) => {
-    const indexOfAt = message.indexOf('@');
-    return indexOfAt !== -1 && /\w/.test(message[indexOfAt + 1]);
+    return /@\w/.test(message);
   })) {
     pushToHook({
       author, date, subject, body, hash,
